@@ -63,6 +63,9 @@
     <h3>Практика (15 недель)</h3>
     <div class="input-group" id="labs"></div>
 
+    <h3>Лабораторные работы (15 недель)</h3>
+    <div class="input-group" id="labs_extra"></div>
+
     <h3>СРСП (недели 4, 8, 12, 14)</h3>
     <div class="input-group" id="srops"></div>
 
@@ -81,11 +84,13 @@
   <script>
     const testDiv = document.getElementById("tests");
     const labDiv = document.getElementById("labs");
+    const labExtraDiv = document.getElementById("labs_extra");
     const sropDiv = document.getElementById("srops");
 
     for (let i = 1; i <= 15; i++) {
       testDiv.innerHTML += `<input type="number" id="test${i}" placeholder="Тест ${i}">`;
       labDiv.innerHTML += `<input type="number" id="lab${i}" placeholder="Практика ${i}">`;
+      labExtraDiv.innerHTML += `<input type="number" id="labExtra${i}" placeholder="Лабораторная ${i}">`;
     }
 
     const sropWeeks = [4, 8, 12, 14];
@@ -105,13 +110,14 @@
         let values = [];
         const test = getValue(`test${i}`);
         const lab = getValue(`lab${i}`);
+        const labExtra = getValue(`labExtra${i}`);
         const srop = getValue(`srop${i}`);
 
         if (test !== null) values.push(test);
         if (lab !== null) values.push(lab);
+        if (labExtra !== null) values.push(labExtra);
         if (sropWeeks.includes(i)) {
-          const sropVal = getValue(`srop${i}`);
-          if (sropVal !== null) values.push(sropVal);
+          if (srop !== null) values.push(srop);
         }
 
         const avg = values.length > 0 ? values.reduce((a, b) => a + b) / values.length : 0;
