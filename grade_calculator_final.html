@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Расчет итоговой оценки</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h2, h3 {
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .input-group input {
+      width: 120px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .results {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Введите оценки</h2>
+
+    <h3>Тесты (15 недель)</h3>
+    <div class="input-group" id="tests"></div>
+
+    <h3>Практика (15 недель)</h3>
+    <div class="input-group" id="labs"></div>
+
+    <h3>СРСП (недели 4, 8, 12, 14)</h3>
+    <div class="input-group" id="srops"></div>
+
+    <br>
+    <button onclick="calculate()">Рассчитать</button>
+
+    <div class="results">
+      <h3>Результаты:</h3>
+      <p>Средняя за 15 недель: <span id="avgResult"></span></p>
+      <p>РК 1 (недели 1-8): <span id="rk1Result"></span></p>
+      <p>РК 2 (недели 9-15): <span id="rk2Result"></span></p>
+      <p>Итоговая оценка: <span id="finalResult"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const testDiv = document.getElementById("tests");
+    const labDiv = document.getElementById("labs");
+    const sropDiv = document.getElementById("srops");
+
+    for (let i = 1; i <= 15; i++) {
+      testDiv.innerHTML += `<input type="number" id="test${i}" placeholder="Тест ${i}">`;
+      labDiv.innerHTML += `<input type="number" id="lab${i}" placeholder="Практика ${i}">`;
+    }
+
+    const sropWeeks = [4, 8, 12, 14];
+    for (let i = 0; i < sropWeeks.length; i++) {
+      sropDiv.innerHTML += `<input type="number" id="srop${sropWeeks[i]}" placeholder="СРСП неделя ${sropWeeks[i]}">`;
+    }
+
+    function getValue(id) {
+      const value = parseFloat(document.getElementById(id)?.value);
+      return isNaN(value) ? null : value;
+    }
+
+    function calculate() {
+      let weeklyAverages = [];
+
+      for (let i = 1; i <= 15; i++) {
+        let values = [];
+        const test = getValue(`test${i}`);
+        const lab = getValue(`lab${i}`);
+        const srop = getValue(`srop${i}`);
+
+        if (test !== null) values.push(test);
+        if (lab !== null) values.push(lab);
+        if (sropWeeks.includes(i)) {
+          const sropVal = getValue(`srop${i}`);
+          if (sropVal !== null) values.push(sropVal);
+        }
+
+        const avg = values.length > 0 ? values.reduce((a, b) => a + b) / values.length : 0;
+        weeklyAverages.push(avg);
+      }
+
+      const rk1 = weeklyAverages.slice(0, 8);
+      const rk2 = weeklyAverages.slice(8, 15);
+      const rk1Avg = rk1.length ? (rk1.reduce((a, b) => a + b) / rk1.length).toFixed(2) : 0;
+      const rk2Avg = rk2.length ? (rk2.reduce((a, b) => a + b) / rk2.length).toFixed(2) : 0;
+      const overallAvg = weeklyAverages.length ? (weeklyAverages.reduce((a, b) => a + b) / weeklyAverages.length).toFixed(2) : 0;
+      const finalGrade = ((parseFloat(rk1Avg) + parseFloat(rk2Avg)) / 2).toFixed(2);
+
+      document.getElementById("avgResult").textContent = overallAvg;
+      document.getElementById("rk1Result").textContent = rk1Avg;
+      document.getElementById("rk2Result").textContent = rk2Avg;
+      document.getElementById("finalResult").textContent = finalGrade;
+    }
+  </script>
+</body>
+</html>
